@@ -13,7 +13,7 @@ import com.android.volley.toolbox.Volley;
 public class RequestsQueueHelper {
 
     private Context mContext;
-    private RequestQueue mRequestQueue = getRequestQueue();
+    private RequestQueue mRequestQueue;
     private static RequestsQueueHelper mInstance;
 
     public RequestsQueueHelper(Context context) {

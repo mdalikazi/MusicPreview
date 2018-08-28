@@ -1,9 +1,14 @@
 package com.alikazi.codetestaim.viewmodel;
 
+import com.alikazi.codetestaim.models.PlayoutItem;
 import com.alikazi.codetestaim.network.AppRepository;
 import com.alikazi.codetestaim.network.RequestsQueueHelper;
 import com.alikazi.codetestaim.utils.AppConstants;
+import com.alikazi.codetestaim.utils.DLog;
 
+import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -17,7 +22,7 @@ public class MainViewModel extends ViewModel {
     private AppRepository mAppRepository;
     private RequestsQueueHelper mRequestQueueHelper;
 
-    public MainViewModel(AppRepository appRepository, RequestsQueueHelper requestsQueueHelper) {
+    public MainViewModel(@NonNull RequestsQueueHelper requestsQueueHelper, @NonNull AppRepository appRepository) {
         mAppRepository = appRepository;
         mRequestQueueHelper = requestsQueueHelper;
     }
@@ -31,15 +36,15 @@ public class MainViewModel extends ViewModel {
                 }
             });
 
-    public LiveData<ArrayList<Model>> mFeed = Transformations.switchMap(mFeedResult,
-            new Function<AppRepository.ApiResponseModel, LiveData<ArrayList<Model>>>() {
+    public LiveData<ArrayList<PlayoutItem>> mFeed = Transformations.switchMap(mFeedResult,
+            new Function<AppRepository.ApiResponseModel, LiveData<ArrayList<PlayoutItem>>>() {
                 @Override
-                public LiveData<ArrayList<Model>> apply(AppRepository.ApiResponseModel input) {
+                public LiveData<ArrayList<PlayoutItem>> apply(AppRepository.ApiResponseModel input) {
                     return input._feed;
                 }
             });
 
-    public LiveData<String> networkErrors = Transformations.switchMap(mFeedResult,
+    public LiveData<String> mNetworkErrors = Transformations.switchMap(mFeedResult,
             new Function<AppRepository.ApiResponseModel, LiveData<String>>() {
                 @Override
                 public LiveData<String> apply(AppRepository.ApiResponseModel input) {
@@ -47,7 +52,8 @@ public class MainViewModel extends ViewModel {
                 }
             });
 
-    public void getPhotosFromDb() {
+    public void loadFeed() {
+        DLog.i(LOG_TAG, "loadFeed");
         mResponseLiveData.postValue(null);
     }
 

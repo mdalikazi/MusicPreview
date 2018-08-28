@@ -7,29 +7,44 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.alikazi.codetestaim.R;
+import com.alikazi.codetestaim.utils.AimAnimationUtils;
 import com.alikazi.codetestaim.utils.AppConstants;
 import com.alikazi.codetestaim.utils.DLog;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AimAnimationUtils.ToolbarAnimationListener {
+
+    private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
+
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_main);
+
         checkStoragePermission();
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, MainFragment.getInstance())
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .commitNow();
+            AimAnimationUtils.animateToolbar(this, mToolbar, this);
         }
+    }
+
+    @Override
+    public void onToolbarAnimationEnd() {
+        mToolbar.setTitle(getString(R.string.toolbar_title_radio));
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, MainFragment.getInstance())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commitNow();
     }
 
     private void checkStoragePermission() {
