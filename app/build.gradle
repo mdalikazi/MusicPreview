@@ -26,11 +26,11 @@ dependencies {
     implementation 'com.android.support:design:' + rootProject.supportLibVersion
 
     // ViewModel and LiveData
-    implementation 'android.arch.lifecycle:extensions:' + rootProject.archComponentsVersion
+    implementation "android.arch.lifecycle:extensions:" + rootProject.archComponentsVersion
 
     // Room
-    implementation 'android.arch.persistence.room:runtime' + rootProject.archComponentsVersion
-    annotationProcessor 'android.arch.persistence.room:compiler' + rootProject.archComponentsVersion
+    implementation "android.arch.persistence.room:runtime:" + rootProject.archComponentsVersion
+    annotationProcessor "android.arch.persistence.room:compiler:" + rootProject.archComponentsVersion
 
     // GSON
     implementation 'com.google.code.gson:gson:2.8.5'
