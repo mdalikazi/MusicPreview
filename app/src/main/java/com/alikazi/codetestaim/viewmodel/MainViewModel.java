@@ -1,6 +1,8 @@
 package com.alikazi.codetestaim.viewmodel;
 
 import com.alikazi.codetestaim.models.ApiResponseModel;
+import com.alikazi.codetestaim.network.AppRepository;
+import com.alikazi.codetestaim.network.RequestQueueHelper;
 import com.alikazi.codetestaim.utils.AppConstants;
 
 import androidx.lifecycle.LiveData;
@@ -18,5 +20,13 @@ public class MainViewModel extends ViewModel {
 
     private MutableLiveData<ApiResponseModel> mResponseLiveData = new MutableLiveData<>();
     private LiveData<ApiResponseModel> mLoadResult = Transformations.map(mResponseLiveData, {mAppRepository.loadPhotos(mRequestQueueHelper)});
-    
+
+    public void getPhotosFromDb() {
+        mResponseLiveData.postValue(null);
+    }
+
+    public void  clearDatabase() {
+        mAppRepository.clearDatabase();
+    }
+
 }
