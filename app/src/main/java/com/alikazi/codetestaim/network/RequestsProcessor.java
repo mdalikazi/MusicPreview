@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.alikazi.codetestaim.utils.AppConstants;
+import com.alikazi.codetestaim.utils.DLog;
 import com.alikazi.codetestaim.utils.NetConstants;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -12,18 +13,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 
 public class RequestsProcessor {
 
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
-    private BufferedInputStream mBufferedInputStream;
-    private InputStreamReader mInputStreamReader;
-
-    public void getFeedFromApi(final RequestQueueHelper requestQueueHelper,
+    public static void getFeedFromApi(final RequestsQueueHelper requestQueueHelper,
                                final FeedRequestListener feedRequestListener) {
         Log.i(LOG_TAG, "getFeedFromApi onPreExecute");
         Uri.Builder uriBuilder = new Uri.Builder()
@@ -45,8 +41,9 @@ public class RequestsProcessor {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-//                            val photosResponse: PhotosResponse? = Gson().fromJson(response.toString(), PhotosResponse::class.java)
-//                            onSuccess(photosResponse?.photos ?: emptyList())
+                            DLog.d(LOG_TAG, "onResponse: " + response.toString());
+//                            ApiResponseModel apiResponseModel = new Gson().fromJson(response.toString(), ApiResponseModel.class);
+//                            onSuccess(photosResponse?.feed ?: emptyList())
                             if (feedRequestListener != null) {
                                 feedRequestListener.onSuccess();
                             }
@@ -55,6 +52,7 @@ public class RequestsProcessor {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
+                            DLog.d(LOG_TAG, "onErrorResponse: " + error.getMessage());
                             if (feedRequestListener != null) {
                                 feedRequestListener.onFailure(error.getMessage());
                             }

@@ -10,19 +10,19 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
-public class RequestQueueHelper {
+public class RequestsQueueHelper {
 
     private Context mContext;
     private RequestQueue mRequestQueue = getRequestQueue();
-    private static RequestQueueHelper mInstance;
+    private static RequestsQueueHelper mInstance;
 
-    public RequestQueueHelper(Context context) {
+    public RequestsQueueHelper(Context context) {
         mContext = context;
     }
 
-    public static RequestQueueHelper getInstance(Context context) {
+    public static RequestsQueueHelper getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new RequestQueueHelper(context);
+            mInstance = new RequestsQueueHelper(context);
         }
 
         return mInstance;

@@ -78,7 +78,7 @@ public class MainFragment extends Fragment {
     private void setupAdapter() {
 //        mAdapter =
 //        mAdapter = new PhotosAdapter(activity?.applicationContext!!, this);
-//        mMainViewModel.photos.observe(this, Observer<PagedList<Photo>> {
+//        mMainViewModel.feed.observe(this, Observer<PagedList<Photo>> {
 //                showEmptyMessage(it?.size == 0);
 //                mAdapter.submitList(it);
 //        });
