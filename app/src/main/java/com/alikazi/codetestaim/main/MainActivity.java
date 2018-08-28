@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,25 +25,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         checkStoragePermission();
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, MainFragment.newInstance())
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, MainFragment.getInstance())
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .commitNow()
+                    .commitNow();
         }
     }
 
-    private boolean checkStoragePermission() {
+    private void checkStoragePermission() {
         DLog.i(AppConstants.AIM_LOG_TAG, "checkStoragePermission");
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             DLog.d(AppConstants.AIM_LOG_TAG, "STORAGE PERMISSION_GRANTED");
-            return true;
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 showStoragePermissionExplanation();
             } else {
                 requestStoragePermission();
             }
-            return false;
         }
     }
 

@@ -35,7 +35,7 @@ public class MainFragment extends Fragment {
 
     private static MainFragment mInstance;
 
-    public MainFragment getInstance() {
+    public static MainFragment getInstance() {
         if (mInstance == null) {
             mInstance = new MainFragment();
         }
