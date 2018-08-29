@@ -60,7 +60,7 @@ public class AimAnimationUtils {
         }
     }
 
-    private static float getDefaultActionBarHeightInPixels(Context context) {
+    public static float getDefaultActionBarHeightInPixels(Context context) {
         TypedValue typedValue = new TypedValue();
         boolean canGetValue = context.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
         if (canGetValue) {
