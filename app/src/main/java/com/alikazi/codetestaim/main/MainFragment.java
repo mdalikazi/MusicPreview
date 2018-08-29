@@ -104,7 +104,8 @@ public class MainFragment extends Fragment {
         mMainViewModel.mFeed.observe(this, new Observer<ArrayList<PlayoutItem>>() {
             @Override
             public void onChanged(ArrayList<PlayoutItem> playoutItems) {
-//                showEmptyMessage(it?.size == 0);
+                DLog.d(LOG_TAG, "title: " + playoutItems.get(0).title);
+                showEmptyMessage(playoutItems.isEmpty());
 //                mAdapter.submitList(it);
             }
         });
@@ -115,5 +116,15 @@ public class MainFragment extends Fragment {
             }
         });
 //        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    /**
+     * If API response is empty show empty message and hide recycler view
+     * and vice versa
+     * @param show
+     */
+    private void showEmptyMessage(boolean show) {
+        mEmptyMessageTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 }

@@ -3,6 +3,7 @@ package com.alikazi.codetestaim.network;
 import android.net.Uri;
 import android.util.Log;
 
+import com.alikazi.codetestaim.models.FeedResponseModel;
 import com.alikazi.codetestaim.models.PlayoutItem;
 import com.alikazi.codetestaim.utils.AppConstants;
 import com.alikazi.codetestaim.utils.DLog;
@@ -19,13 +20,13 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 public class RequestsProcessor {
 
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
-    public static void getFeedFromApi(final RequestsQueueHelper requestQueueHelper,
-                               final FeedRequestListener feedRequestListener) {
+    public static void getFeedFromApi(final RequestsQueueHelper requestQueueHelper, final FeedRequestListener feedRequestListener) {
         DLog.i(LOG_TAG, "getFeedFromApi");
         Uri.Builder uriBuilder = new Uri.Builder()
                 .scheme(NetConstants.SCHEME_HTTP)
@@ -44,23 +45,18 @@ public class RequestsProcessor {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            DLog.i(LOG_TAG, "onResponse: " + response);
-//                            ApiResponseModel apiResponseModel = new Gson().fromJson(response.toString(), ApiResponseModel.class);
-//                            onSuccess(photosResponse?.feed ?: emptyList())
-                            parseXml(response);
+                            ArrayList<PlayoutItem> items = parseXml(response);
                             if (feedRequestListener != null) {
-                                feedRequestListener.onSuccess();
+                                feedRequestListener.onSuccess(items != null ? items : new ArrayList<PlayoutItem>());
                             }
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            DLog.i(LOG_TAG, "onErrorResponse: " + error.getMessage());
                             if (feedRequestListener != null) {
-                                feedRequestListener.onFailure(error.getMessage());
+                                feedRequestListener.onFailure(error != null ? error.getMessage() : "Unknown error!");
                             }
-//                            onFailure(error.message ?: "Unknown Error");
                         }
                     }
             );
@@ -71,10 +67,9 @@ public class RequestsProcessor {
                 feedRequestListener.onFailure("Internal error!");
             }
         }
-
     }
 
-    private static void parseXml(String xml) {
+    private static ArrayList parseXml(String xml) {
         XmlParserCreator parserCreator = new XmlParserCreator() {
             @Override
             public XmlPullParser createParser() {
@@ -86,21 +81,13 @@ public class RequestsProcessor {
             }
         };
 
-        GsonXml gsonXml = new GsonXmlBuilder()
-                .setXmlParserCreator(parserCreator)
-                .create();
-
-//        String xml = "<model><playoutdata><playoutitem>item</playoutitem></<playoutdata>></model>";
-        PlayoutItem playoutItem = gsonXml.fromXml(xml, PlayoutItem.class);
-        DLog.d(LOG_TAG, "playoutItem.artist: " + playoutItem.artist);
-        DLog.d(LOG_TAG, "playoutItem.title: " + playoutItem.title);
-
-//        assertEquals("my name", model.getName());
-//        assertEquals("my description", model.getDescription());
+        GsonXml gsonXml = new GsonXmlBuilder().setXmlParserCreator(parserCreator).create();
+        FeedResponseModel feedResponseModel = gsonXml.fromXml(xml, FeedResponseModel.class);
+        return feedResponseModel.playoutData;
     }
 
     public interface FeedRequestListener {
-        void onSuccess();
+        void onSuccess(ArrayList<PlayoutItem> items);
 
         void onFailure(String errorMessage);
     }

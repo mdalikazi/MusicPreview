@@ -16,9 +16,9 @@ public class AppRepository {
         final ApiResponseModel apiResponseModel = new ApiResponseModel();
         RequestsProcessor.getFeedFromApi(requestsQueueHelper, new RequestsProcessor.FeedRequestListener() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(ArrayList<PlayoutItem> items) {
                 DLog.i(LOG_TAG, "onSuccess");
-//                apiResponseModel._feed.postValue();
+                apiResponseModel._feed.postValue(items);
             }
 
             @Override
