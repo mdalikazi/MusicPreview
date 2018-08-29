@@ -2,11 +2,13 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:layout_marginStart="@dimen/mtrl_card_spacing"
     android:layout_marginEnd="@dimen/mtrl_card_spacing"
-    android:layout_marginTop="@dimen/mtrl_card_spacing">
+    android:layout_marginTop="@dimen/mtrl_card_spacing"
+    app:cardElevation="4dp">
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -9,7 +9,7 @@
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/main_swipe_refresh_layout"
-        android:layout_width="200dp"
+        android:layout_width="340dp"
         android:layout_height="match_parent">
 
         <RelativeLayout

@@ -9,5 +9,6 @@
     <string name="network_error_no_internet">Please check your internet connection!</string>
     <string name="empty_list_message_loading">Loading feed&#8230;</string>
     <string name="empty_list_message_error">There was an error loading the feed.</string>
+    <string name="toast_message_itunes">Would redirect you to iTunes app</string>
 
 </resources>
