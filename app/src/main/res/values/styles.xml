@@ -27,9 +27,4 @@
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="TrackIconStyle">
-        <item name="android:foreground">@drawable/image_circular_border</item>
-        <item name="android:contentDescription">@string/image_content_description_default</item>
-    </style>
-
 </resources>

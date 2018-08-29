@@ -14,92 +14,123 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <eu.gsottbauer.equalizerview.EqualizerView
+            android:id="@+id/equalizer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:alpha="0"
+            app:barColor="@color/colorAccent"
+            app:barCount="80"
+            app:barWidth="4dp"
+            app:marginLeft="1dp"
+            app:marginRight="1dp"
+            app:runInBatterySaveMode="true" />
 
-            <ImageView
-                android:id="@+id/hero_item_image"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@drawable/ic_album"
-                android:backgroundTint="@color/colorIconInactive"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp">
 
             <LinearLayout
-                android:id="@+id/item_info_container"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/item_title"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:textSize="18sp"
-                    tools:text="Title" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/item_artist"
+                    <ImageView
+                        android:id="@+id/hero_item_image"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/ic_album"
+                        android:backgroundTint="@color/colorIconInactive"/>
+
+                    <ViewFlipper
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:inAnimation="@android:anim/fade_in"
+                        android:outAnimation="@android:anim/fade_out">
+
+                        <ImageView
+                            android:id="@+id/item_play"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_play"/>
+
+                        <ImageView
+                            android:id="@+id/item_pause"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_pause"/>
+
+                    </ViewFlipper>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/item_info_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="?android:textColorSecondary"
-                    tools:text="Artist Name" />
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/item_album"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?android:textColorSecondary"
-                    tools:text="Album" />
+                    <TextView
+                        android:id="@+id/item_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:textSize="18sp"
+                        tools:text="Title" />
+
+                    <TextView
+                        android:id="@+id/item_artist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="?android:textColorSecondary"
+                        tools:text="Artist Name" />
+
+                    <TextView
+                        android:id="@+id/item_album"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?android:textColorSecondary"
+                        tools:text="Album" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/item_preview_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:padding="8dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/item_preview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="?android:textColorSecondary"
-                android:text="Preview" />
-
             <ImageView
                 android:id="@+id/item_cart"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:clickable="true"
+                android:src="@drawable/ic_itunes"/>
+
+            <CheckBox
+                android:id="@+id/item_heart_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:clickable="true"
-                android:tint="@color/colorIconInactive"
-                android:src="@drawable/ic_cart"/>
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:button="@drawable/heart_checkbox"
+                android:checked="false"/>
 
         </RelativeLayout>
-
-        <CheckBox
-            android:id="@+id/item_heart_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="8dp"
-            android:button="@drawable/heart_checkbox"
-            android:checked="false"/>
 
     </RelativeLayout>
 

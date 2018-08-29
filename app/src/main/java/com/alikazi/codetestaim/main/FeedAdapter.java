@@ -1,9 +1,16 @@
 package com.alikazi.codetestaim.main;
 
 import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,16 +18,23 @@ import android.widget.Toast;
 import com.alikazi.codetestaim.R;
 import com.alikazi.codetestaim.models.PlayoutItem;
 import com.alikazi.codetestaim.utils.AimViewUtils;
+import com.alikazi.codetestaim.utils.AppConstants;
+import com.alikazi.codetestaim.utils.DLog;
+import com.alikazi.codetestaim.utils.NetConstants;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+import eu.gsottbauer.equalizerview.EqualizerView;
 
 public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHolder> {
 
+    private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
+
     private Context mContext;
     private LayoutInflater mLayoutInflater;
+    private MediaPlayer mMediaPlayer;
     private ItemSelectionListener mItemSelectionListener;
 
     public FeedAdapter(Context context, ItemSelectionListener itemSelectionListener) {
@@ -28,6 +42,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         mContext = context;
         mItemSelectionListener = itemSelectionListener;
         mLayoutInflater = LayoutInflater.from(mContext);
+        mMediaPlayer = new MediaPlayer();
     }
 
     @NonNull
@@ -38,7 +53,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ItemViewHolder holder, final int position) {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,17 +63,75 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             }
         });
 
-        PlayoutItem item = getItem(position);
+        final PlayoutItem item = getItem(position);
         AimViewUtils.showImageWithGlide(mContext, item.imageUrl, holder.heroImageView);
         holder.titleTextView.setText(item.title);
         holder.artistTextView.setText(item.artist);
         holder.albumTextView.setText(item.album);
-        holder.cartImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext, R.string.toast_message_itunes, Toast.LENGTH_SHORT).show();
+        if (item.customFields != null) {
+            final PlayoutItem.CustomField customField = item.customFields.get(0);
+            if (customField.name.equalsIgnoreCase(NetConstants.CUSTOM_FIELDS_KEY_ITUNES_BUY)) {
+                holder.cartImageView.setVisibility(View.VISIBLE);
+                holder.cartImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(mContext, R.string.toast_message_itunes, Toast.LENGTH_LONG).show();
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(customField.value));
+                        mContext.startActivity(browserIntent);
+                    }
+                });
             }
-        });
+        } else {
+            holder.cartImageView.setVisibility(View.GONE);
+        }
+        if (item.previewUrl != null && !item.previewUrl.isEmpty()) {
+            holder.heroImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mMediaPlayer.isPlaying()) {
+                        return;
+                    }
+                    Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
+                    rotation.setInterpolator(new AccelerateDecelerateInterpolator());
+                    rotation.setFillAfter(true);
+                    rotation.setDuration(streamPreview(item.previewUrl));
+                    rotation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            holder.equalizerView.animate().alpha(0.4f).setDuration(1000);
+                            holder.equalizerView.animateBars();
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            holder.equalizerView.animate().alpha(0f).setDuration(1000);
+                            holder.equalizerView.stopBars();
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                    view.startAnimation(rotation);
+                }
+            });
+        }
+    }
+
+    private int streamPreview(String url) {
+        try {
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mMediaPlayer.setDataSource(url);
+            mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+            mMediaPlayer.start();
+            return mMediaPlayer.getDuration();
+        } catch (Exception e) {
+            DLog.d(LOG_TAG, "Exception streaming preview: " + e.toString());
+            Toast.makeText(mContext, "", Toast.LENGTH_LONG).show();
+        }
+
+        return 0;
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -68,6 +141,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         private TextView artistTextView;
         private TextView albumTextView;
         private ImageView cartImageView;
+        private EqualizerView equalizerView;
 
         private ItemViewHolder(View view) {
             super(view);
@@ -76,6 +150,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             artistTextView = view.findViewById(R.id.item_artist);
             albumTextView = view.findViewById(R.id.item_album);
             cartImageView = view.findViewById(R.id.item_cart);
+            equalizerView = view.findViewById(R.id.equalizer);
         }
     }
 
