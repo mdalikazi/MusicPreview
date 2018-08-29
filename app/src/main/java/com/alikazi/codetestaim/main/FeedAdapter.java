@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alikazi.codetestaim.R;
@@ -64,11 +65,19 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
 
+        private ImageView heroImageView;
+        private TextView titleTextView;
         private TextView artistTextView;
+        private TextView albumTextView;
+        private ImageView cartImageView;
 
         private ItemViewHolder(View view) {
             super(view);
-            artistTextView = view.findViewById(R.id.item_playout_artist);
+            heroImageView = view.findViewById(R.id.hero_item_image);
+            titleTextView = view.findViewById(R.id.item_title);
+            artistTextView = view.findViewById(R.id.item_artist);
+            albumTextView = view.findViewById(R.id.item_album);
+            cartImageView = view.findViewById(R.id.item_cart);
         }
     }
 
