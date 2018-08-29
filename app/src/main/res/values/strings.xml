@@ -7,5 +7,7 @@
     <string name="toolbar_title_radio">Radio</string>
     <string name="permission_explanation_storage">AimTest requires storage permission to manage local data.</string>
     <string name="network_error_no_internet">Please check your internet connection!</string>
+    <string name="empty_list_message_loading">Loading feed&#8230;</string>
+    <string name="empty_list_message_error">There was an error loading the feed.</string>
 
 </resources>
