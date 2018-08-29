@@ -44,7 +44,7 @@ public class RequestsQueueHelper {
         }
     }
 
-    private void cancelAllRequests() {
+    public void cancelAllRequests() {
         getRequestQueue().cancelAll(mContext.getApplicationContext());
     }
 

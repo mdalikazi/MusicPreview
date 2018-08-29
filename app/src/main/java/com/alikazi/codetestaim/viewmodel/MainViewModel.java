@@ -54,11 +54,6 @@ public class MainViewModel extends ViewModel {
 
     public void loadFeed() {
         DLog.i(LOG_TAG, "loadFeed");
-        mResponseLiveData.postValue(null);
+        mResponseLiveData.setValue(null);
     }
-
-    public void  clearDatabase() {
-//        mAppRepository.clearDatabase();
-    }
-
 }

@@ -10,6 +10,6 @@
     <string name="empty_list_message_loading">Loading feed&#8230;</string>
     <string name="empty_list_message_error">There was an error loading the feed.</string>
     <string name="toast_message_itunes">Loading iTunes&#8230;</string>
-    <string name="toast_message_streaming_error">An error occurred while streaming. Please try again later.</string>
+    <string name="toast_message_streaming_error">An error occurred while streaming.</string>
 
 </resources>

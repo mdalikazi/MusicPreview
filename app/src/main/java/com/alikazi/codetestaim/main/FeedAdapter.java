@@ -33,8 +33,9 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
     private Context mContext;
+    private int mNowPlayingPosition;
     private LayoutInflater mLayoutInflater;
-    private MediaPlayer mMediaPlayer;
+//    private MediaPlayer mMediaPlayer;
     private ItemSelectionListener mItemSelectionListener;
 
     public FeedAdapter(Context context, ItemSelectionListener itemSelectionListener) {
@@ -42,7 +43,6 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         mContext = context;
         mItemSelectionListener = itemSelectionListener;
         mLayoutInflater = LayoutInflater.from(mContext);
-        mMediaPlayer = new MediaPlayer();
     }
 
     @NonNull
@@ -88,9 +88,11 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             holder.heroImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mMediaPlayer.isPlaying()) {
+                    if (position == mNowPlayingPosition) {
+                        DLog.i(LOG_TAG, "NowPlaying return");
                         return;
                     }
+                    mNowPlayingPosition = position;
                     Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
                     rotation.setInterpolator(new AccelerateDecelerateInterpolator());
                     rotation.setFillAfter(true);
@@ -121,6 +123,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
 
     private int streamPreview(String url) {
         try {
+            MediaPlayer mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setDataSource(url);
             mMediaPlayer.prepare(); // might take long! (for buffering, etc)
@@ -128,7 +131,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             return mMediaPlayer.getDuration();
         } catch (Exception e) {
             DLog.d(LOG_TAG, "Exception streaming preview: " + e.toString());
-            Toast.makeText(mContext, "", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, R.string.toast_message_streaming_error, Toast.LENGTH_LONG).show();
         }
 
         return 0;
