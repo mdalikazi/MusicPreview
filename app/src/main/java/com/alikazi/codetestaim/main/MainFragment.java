@@ -29,13 +29,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionListener {
 
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
     private boolean mIsTabletMode;
     private MainViewModel mMainViewModel;
-    private RecyclerView mAdapter;
+    private FeedAdapter mAdapter;
 
     private RecyclerView mRecyclerView;
     private TextView mEmptyMessageTextView;
@@ -108,16 +108,15 @@ public class MainFragment extends Fragment {
 
     private void setupAdapter() {
         DLog.i(LOG_TAG, "setupAdapter");
-//        mAdapter =
-//        mAdapter = new PhotosAdapter(activity?.applicationContext!!, this);
-        //        mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new FeedAdapter(getActivity(), this);
+        mRecyclerView.setAdapter(mAdapter);
         mMainViewModel.mFeed.observe(this, new Observer<ArrayList<PlayoutItem>>() {
             @Override
             public void onChanged(ArrayList<PlayoutItem> playoutItems) {
                 DLog.d(LOG_TAG, "title: " + playoutItems.get(0).title);
                 showEmptyMessage(playoutItems.isEmpty());
                 mSwipeRefreshLayout.setRefreshing(false);
-//                mAdapter.submitList(it);
+                mAdapter.submitList(playoutItems);
             }
         });
         mMainViewModel.mNetworkErrors.observe(this, new Observer<String>() {
@@ -129,6 +128,11 @@ public class MainFragment extends Fragment {
                 Snackbar.make(mSwipeRefreshLayout, "Oops! " + error, Snackbar.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onItemSelected(int itemPosition) {
+        DLog.d(LOG_TAG, "User selected position " + itemPosition);
     }
 
     /**
