@@ -78,18 +78,16 @@ public class MainFragment extends Fragment {
             mDetailFragmentContainer = view.findViewById(R.id.detail_fragment_container_w700dp);
         }
         DLog.d(LOG_TAG, "mIsTabletMode: " + mIsTabletMode);
-
-        setupRecyclerView();
-        setupAdapter();
-        mMainViewModel = ViewModelProviders.of(getActivity(), Injector.provideViewModelFactory(getActivity()))
-                .get(MainViewModel.class);
-        loadFeed();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+        mMainViewModel = ViewModelProviders.of(getActivity(), Injector.provideViewModelFactory(getActivity())).get(MainViewModel.class);
+        setupRecyclerView();
+        setupAdapter();
+        loadFeed();
     }
 
     private void loadFeed() {
