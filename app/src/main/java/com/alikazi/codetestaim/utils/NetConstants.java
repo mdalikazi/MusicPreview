@@ -12,4 +12,7 @@ public class NetConstants {
     public static final String URL_PATH_NOVA = "nova";
     public static final String URL_PATH_NOVA_100 = "nova100";
     public static final String URL_PATH_ON_AIR = "onair.xml";
+
+    public static final String CUSTOM_FIELDS_KEY_ITUNES_BUY = "link-buy-track-itunes-url";
+    public static final String CUSTOM_FIELDS_KEY_ITUNES_DESC = "link-buy-track-itunes-desc";
 }

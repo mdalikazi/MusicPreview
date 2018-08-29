@@ -1,6 +1,8 @@
 package com.alikazi.codetestaim.main;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 import com.alikazi.codetestaim.R;
 import com.alikazi.codetestaim.models.PlayoutItem;
 import com.alikazi.codetestaim.utils.AimViewUtils;
+import com.alikazi.codetestaim.utils.NetConstants;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -48,7 +51,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             }
         });
 
-        PlayoutItem item = getItem(position);
+        final PlayoutItem item = getItem(position);
         AimViewUtils.showImageWithGlide(mContext, item.imageUrl, holder.heroImageView);
         holder.titleTextView.setText(item.title);
         holder.artistTextView.setText(item.artist);
@@ -56,7 +59,14 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         holder.cartImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, R.string.toast_message_itunes, Toast.LENGTH_SHORT).show();
+                if (item.customFields != null) {
+                    PlayoutItem.CustomField customField = item.customFields.get(0);
+                    if (customField.name.equalsIgnoreCase(NetConstants.CUSTOM_FIELDS_KEY_ITUNES_BUY)) {
+                        Toast.makeText(mContext, R.string.toast_message_itunes, Toast.LENGTH_LONG).show();
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(customField.value));
+                        mContext.startActivity(browserIntent);
+                    }
+                }
             }
         });
     }
