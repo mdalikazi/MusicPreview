@@ -1,6 +1,10 @@
 package com.alikazi.codetestaim.network;
 
+import com.alikazi.codetestaim.models.PlayoutItem;
 import com.alikazi.codetestaim.utils.AppConstants;
+import com.alikazi.codetestaim.utils.DLog;
+
+import java.util.ArrayList;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -12,12 +16,14 @@ public class AppRepository {
         final ApiResponseModel apiResponseModel = new ApiResponseModel();
         RequestsProcessor.getFeedFromApi(requestsQueueHelper, new RequestsProcessor.FeedRequestListener() {
             @Override
-            public void onSuccess() {
-//                apiResponseModel._feed.postValue();
+            public void onSuccess(ArrayList<PlayoutItem> items) {
+                DLog.i(LOG_TAG, "onSuccess");
+                apiResponseModel._feed.postValue(items);
             }
 
             @Override
             public void onFailure(String errorMessage) {
+                DLog.i(LOG_TAG, "onFailure: " + errorMessage);
                 apiResponseModel._networkErrors.postValue(errorMessage);
             }
         });
@@ -25,8 +31,8 @@ public class AppRepository {
     }
 
     public class ApiResponseModel {
-        public MutableLiveData<String> _feed;
-        public MutableLiveData<String> _networkErrors;
+        public MutableLiveData<ArrayList<PlayoutItem>> _feed = new MutableLiveData<>();
+        public MutableLiveData<String> _networkErrors = new MutableLiveData<>();
     }
 
 }

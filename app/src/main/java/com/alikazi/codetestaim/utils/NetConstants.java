@@ -11,6 +11,5 @@ public class NetConstants {
     public static final String URL_PATH_NOW_PLAYING = "nowplaying";
     public static final String URL_PATH_NOVA = "nova";
     public static final String URL_PATH_NOVA_100 = "nova100";
-    public static final String URL_PATH_ON_AIR = "onair";
-    public static final String URL_QUERY_XML = ".xml";
+    public static final String URL_PATH_ON_AIR = "onair.xml";
 }
