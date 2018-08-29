@@ -86,7 +86,7 @@
                 android:layout_alignParentEnd="true"
                 android:clickable="true"
                 android:tint="@color/colorIconInactive"
-                android:src="@drawable/ic_album"/>
+                android:src="@drawable/ic_cart"/>
 
         </RelativeLayout>
 

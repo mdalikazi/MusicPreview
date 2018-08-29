@@ -18,7 +18,7 @@ public class AimAnimationUtils {
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
             float toolbarHeight = layoutParams.height;
             ValueAnimator animator = ValueAnimator.ofFloat(toolbarHeight, getDefaultActionBarHeightInPixels(context));
-            animator.setDuration(400);
+            animator.setDuration(500);
             animator.setStartDelay(500);
             animator.setInterpolator(new DecelerateInterpolator());
             animator.setTarget(toolbar);
