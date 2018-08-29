@@ -2,11 +2,13 @@ package com.alikazi.codetestaim.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -16,6 +18,8 @@ import android.widget.Toast;
 import com.alikazi.codetestaim.R;
 import com.alikazi.codetestaim.models.PlayoutItem;
 import com.alikazi.codetestaim.utils.AimViewUtils;
+import com.alikazi.codetestaim.utils.AppConstants;
+import com.alikazi.codetestaim.utils.DLog;
 import com.alikazi.codetestaim.utils.NetConstants;
 
 import androidx.annotation.NonNull;
@@ -24,6 +28,8 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHolder> {
+
+    private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
     private Context mContext;
     private LayoutInflater mLayoutInflater;
@@ -75,15 +81,34 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         } else {
             holder.cartImageView.setVisibility(View.GONE);
         }
-        holder.heroImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
-                rotation.setInterpolator(new AccelerateInterpolator(0.7f));
-                rotation.setFillAfter(true);
-                v.startAnimation(rotation);
-            }
-        });
+        if (item.previewUrl != null && !item.previewUrl.isEmpty()) {
+            holder.heroImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
+                    rotation.setInterpolator(new AccelerateDecelerateInterpolator());
+                    rotation.setFillAfter(true);
+                    rotation.setDuration(streamPreview(item.previewUrl));
+                    view.startAnimation(rotation);
+                }
+            });
+        }
+    }
+
+    private int streamPreview(String url) {
+        try {
+            MediaPlayer mediaPlayer = new MediaPlayer();
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.prepare(); // might take long! (for buffering, etc)
+            mediaPlayer.start();
+            return mediaPlayer.getDuration();
+        } catch (Exception e) {
+            DLog.d(LOG_TAG, "Exception streaming preview: " + e.toString());
+            Toast.makeText(mContext, "", Toast.LENGTH_LONG).show();
+        }
+
+        return 0;
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {

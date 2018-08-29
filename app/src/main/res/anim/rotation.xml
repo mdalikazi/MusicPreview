@@ -7,8 +7,9 @@
         android:toDegrees="2880"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:repeatCount="infinite"
         android:repeatMode="restart"
         android:startOffset="0" />
+
+    <!--android:repeatCount="infinite"-->
 
 </set>
