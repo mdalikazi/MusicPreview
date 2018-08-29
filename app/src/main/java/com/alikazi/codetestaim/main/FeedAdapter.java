@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+import eu.gsottbauer.equalizerview.EqualizerView;
 
 public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHolder> {
 
@@ -33,6 +34,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
 
     private Context mContext;
     private LayoutInflater mLayoutInflater;
+    private MediaPlayer mMediaPlayer;
     private ItemSelectionListener mItemSelectionListener;
 
     public FeedAdapter(Context context, ItemSelectionListener itemSelectionListener) {
@@ -40,6 +42,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         mContext = context;
         mItemSelectionListener = itemSelectionListener;
         mLayoutInflater = LayoutInflater.from(mContext);
+        mMediaPlayer = new MediaPlayer();
     }
 
     @NonNull
@@ -50,7 +53,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ItemViewHolder holder, final int position) {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,10 +88,31 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             holder.heroImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (mMediaPlayer.isPlaying()) {
+                        return;
+                    }
                     Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
                     rotation.setInterpolator(new AccelerateDecelerateInterpolator());
                     rotation.setFillAfter(true);
                     rotation.setDuration(streamPreview(item.previewUrl));
+                    rotation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            holder.equalizerView.animate().alpha(0.4f).setDuration(1000);
+                            holder.equalizerView.animateBars();
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            holder.equalizerView.animate().alpha(0f).setDuration(1000);
+                            holder.equalizerView.stopBars();
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
                     view.startAnimation(rotation);
                 }
             });
@@ -97,12 +121,11 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
 
     private int streamPreview(String url) {
         try {
-            MediaPlayer mediaPlayer = new MediaPlayer();
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setDataSource(url);
-            mediaPlayer.prepare(); // might take long! (for buffering, etc)
-            mediaPlayer.start();
-            return mediaPlayer.getDuration();
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mMediaPlayer.setDataSource(url);
+            mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+            mMediaPlayer.start();
+            return mMediaPlayer.getDuration();
         } catch (Exception e) {
             DLog.d(LOG_TAG, "Exception streaming preview: " + e.toString());
             Toast.makeText(mContext, "", Toast.LENGTH_LONG).show();
@@ -118,6 +141,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         private TextView artistTextView;
         private TextView albumTextView;
         private ImageView cartImageView;
+        private EqualizerView equalizerView;
 
         private ItemViewHolder(View view) {
             super(view);
@@ -126,6 +150,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             artistTextView = view.findViewById(R.id.item_artist);
             albumTextView = view.findViewById(R.id.item_album);
             cartImageView = view.findViewById(R.id.item_cart);
+            equalizerView = view.findViewById(R.id.equalizer);
         }
     }
 

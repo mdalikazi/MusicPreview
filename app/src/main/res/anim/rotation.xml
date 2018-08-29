@@ -10,6 +10,4 @@
         android:repeatMode="restart"
         android:startOffset="0" />
 
-    <!--android:repeatCount="infinite"-->
-
 </set>

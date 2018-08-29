@@ -8,110 +8,129 @@
     android:layout_marginStart="@dimen/mtrl_card_spacing"
     android:layout_marginEnd="@dimen/mtrl_card_spacing"
     android:layout_marginTop="@dimen/mtrl_card_spacing"
-    app:contentPadding="8dp"
     app:cardElevation="4dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <eu.gsottbauer.equalizerview.EqualizerView
+            android:id="@+id/equalizer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/hero_item_image"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    android:scaleType="centerCrop"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/ic_album"
-                    android:backgroundTint="@color/colorIconInactive"/>
-
-                <ViewFlipper
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:inAnimation="@android:anim/fade_in"
-                    android:outAnimation="@android:anim/fade_out">
-
-                    <ImageView
-                        android:id="@+id/item_play"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_play"/>
-
-                    <ImageView
-                        android:id="@+id/item_pause"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_pause"/>
-
-                </ViewFlipper>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/item_info_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/item_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="12dp"
-                    android:textSize="18sp"
-                    tools:text="Title" />
-
-                <TextView
-                    android:id="@+id/item_artist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="?android:textColorSecondary"
-                    tools:text="Artist Name" />
-
-                <TextView
-                    android:id="@+id/item_album"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?android:textColorSecondary"
-                    tools:text="Album" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/item_cart"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:clickable="true"
-            android:src="@drawable/ic_itunes"/>
+            android:alpha="0"
+            app:barColor="@color/colorAccent"
+            app:barCount="80"
+            app:barWidth="4dp"
+            app:marginLeft="1dp"
+            app:marginRight="1dp"
+            app:runInBatterySaveMode="true" />
 
-        <CheckBox
-            android:id="@+id/item_heart_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:button="@drawable/heart_checkbox"
-            android:checked="false"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/hero_item_image"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/ic_album"
+                        android:backgroundTint="@color/colorIconInactive"/>
+
+                    <ViewFlipper
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:inAnimation="@android:anim/fade_in"
+                        android:outAnimation="@android:anim/fade_out">
+
+                        <ImageView
+                            android:id="@+id/item_play"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_play"/>
+
+                        <ImageView
+                            android:id="@+id/item_pause"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_pause"/>
+
+                    </ViewFlipper>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/item_info_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/item_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:textSize="18sp"
+                        tools:text="Title" />
+
+                    <TextView
+                        android:id="@+id/item_artist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="?android:textColorSecondary"
+                        tools:text="Artist Name" />
+
+                    <TextView
+                        android:id="@+id/item_album"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?android:textColorSecondary"
+                        tools:text="Album" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/item_cart"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:clickable="true"
+                android:src="@drawable/ic_itunes"/>
+
+            <CheckBox
+                android:id="@+id/item_heart_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:button="@drawable/heart_checkbox"
+                android:checked="false"/>
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
