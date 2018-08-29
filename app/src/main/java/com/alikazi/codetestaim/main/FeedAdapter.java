@@ -56,19 +56,22 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         holder.titleTextView.setText(item.title);
         holder.artistTextView.setText(item.artist);
         holder.albumTextView.setText(item.album);
-        holder.cartImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (item.customFields != null) {
-                    PlayoutItem.CustomField customField = item.customFields.get(0);
-                    if (customField.name.equalsIgnoreCase(NetConstants.CUSTOM_FIELDS_KEY_ITUNES_BUY)) {
+        if (item.customFields != null) {
+            final PlayoutItem.CustomField customField = item.customFields.get(0);
+            if (customField.name.equalsIgnoreCase(NetConstants.CUSTOM_FIELDS_KEY_ITUNES_BUY)) {
+                holder.cartImageView.setVisibility(View.VISIBLE);
+                holder.cartImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         Toast.makeText(mContext, R.string.toast_message_itunes, Toast.LENGTH_LONG).show();
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(customField.value));
                         mContext.startActivity(browserIntent);
                     }
-                }
+                });
             }
-        });
+        } else {
+            holder.cartImageView.setVisibility(View.GONE);
+        }
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {

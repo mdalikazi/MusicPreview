@@ -15,7 +15,7 @@ public class AimViewUtils {
                 .asBitmap()
                 .load(url)
                 .transition(new BitmapTransitionOptions().crossFade())
-                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
+                .apply(new RequestOptions().circleCrop().diskCacheStrategy(DiskCacheStrategy.DATA))
                 .into(target);
     }
 }

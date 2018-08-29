@@ -8,6 +8,7 @@
     android:layout_marginStart="@dimen/mtrl_card_spacing"
     android:layout_marginEnd="@dimen/mtrl_card_spacing"
     android:layout_marginTop="@dimen/mtrl_card_spacing"
+    app:contentPadding="8dp"
     app:cardElevation="4dp">
 
     <RelativeLayout
@@ -68,7 +69,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:padding="8dp"
             android:orientation="horizontal">
 
             <TextView
@@ -98,7 +98,6 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="8dp"
             android:button="@drawable/heart_checkbox"
             android:checked="false"/>
 
