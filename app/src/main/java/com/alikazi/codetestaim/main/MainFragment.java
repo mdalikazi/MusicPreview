@@ -16,6 +16,7 @@ import com.alikazi.codetestaim.utils.DLog;
 import com.alikazi.codetestaim.utils.Injector;
 import com.alikazi.codetestaim.utils.LeftTopSnapHelper;
 import com.alikazi.codetestaim.viewmodel.MainViewModel;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -26,17 +27,19 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionListener {
 
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
     private boolean mIsTabletMode;
     private MainViewModel mMainViewModel;
-    private RecyclerView mAdapter;
+    private FeedAdapter mAdapter;
 
     private RecyclerView mRecyclerView;
     private TextView mEmptyMessageTextView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private FrameLayout mDetailFragmentContainer;
 
     private static MainFragment mInstance;
@@ -49,7 +52,6 @@ public class MainFragment extends Fragment {
         return mInstance;
     }
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,6 +62,14 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mRecyclerView = view.findViewById(R.id.main_recycler_view);
         mEmptyMessageTextView = view.findViewById(R.id.main_empty_list_message);
+        mSwipeRefreshLayout = view.findViewById(R.id.main_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadFeed();
+            }
+        });
+
         if (view.findViewById(R.id.detail_fragment_container_w700dp) == null) {
             mIsTabletMode = false;
             mDetailFragmentContainer = view.findViewById(R.id.detail_fragment_container);
@@ -74,17 +84,16 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        DLog.i(LOG_TAG, "onResume");
-        mMainViewModel = ViewModelProviders.of(getActivity(), Injector.provideViewModelFactory(getActivity()))
-                .get(MainViewModel.class);
+        mMainViewModel = ViewModelProviders.of(getActivity(), Injector.provideViewModelFactory(getActivity())).get(MainViewModel.class);
         setupRecyclerView();
         setupAdapter();
+        loadFeed();
+    }
 
+    private void loadFeed() {
+        mEmptyMessageTextView.setText(getString(R.string.empty_list_message_loading));
+        showEmptyMessage(true);
+        mSwipeRefreshLayout.setRefreshing(true);
         mMainViewModel.loadFeed();
     }
 
@@ -99,23 +108,31 @@ public class MainFragment extends Fragment {
 
     private void setupAdapter() {
         DLog.i(LOG_TAG, "setupAdapter");
-//        mAdapter =
-//        mAdapter = new PhotosAdapter(activity?.applicationContext!!, this);
+        mAdapter = new FeedAdapter(getActivity(), this);
+        mRecyclerView.setAdapter(mAdapter);
         mMainViewModel.mFeed.observe(this, new Observer<ArrayList<PlayoutItem>>() {
             @Override
             public void onChanged(ArrayList<PlayoutItem> playoutItems) {
                 DLog.d(LOG_TAG, "title: " + playoutItems.get(0).title);
                 showEmptyMessage(playoutItems.isEmpty());
-//                mAdapter.submitList(it);
+                mSwipeRefreshLayout.setRefreshing(false);
+                mAdapter.submitList(playoutItems);
             }
         });
         mMainViewModel.mNetworkErrors.observe(this, new Observer<String>() {
             @Override
-            public void onChanged(String s) {
-//                Toast.makeText(getActivity(), "Wooops" + it, Toast.LENGTH_LONG).show();
+            public void onChanged(String error) {
+                mEmptyMessageTextView.setText(getString(R.string.empty_list_message_error));
+                showEmptyMessage(true);
+                mSwipeRefreshLayout.setRefreshing(false);
+                Snackbar.make(mSwipeRefreshLayout, "Oops! " + error, Snackbar.LENGTH_LONG).show();
             }
         });
-//        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onItemSelected(int itemPosition) {
+        DLog.d(LOG_TAG, "User selected position " + itemPosition);
     }
 
     /**
