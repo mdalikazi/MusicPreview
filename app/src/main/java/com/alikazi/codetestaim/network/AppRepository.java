@@ -13,7 +13,6 @@ public class AppRepository {
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
     public ApiResponseModel loadFeed(RequestsQueueHelper requestsQueueHelper) {
-        DLog.i(LOG_TAG, "loadFeed");
         final ApiResponseModel apiResponseModel = new ApiResponseModel();
         RequestsProcessor.getFeedFromApi(requestsQueueHelper, new RequestsProcessor.FeedRequestListener() {
             @Override
@@ -32,8 +31,8 @@ public class AppRepository {
     }
 
     public class ApiResponseModel {
-        public MutableLiveData<ArrayList<PlayoutItem>> _feed;
-        public MutableLiveData<String> _networkErrors;
+        public MutableLiveData<ArrayList<PlayoutItem>> _feed = new MutableLiveData<>();
+        public MutableLiveData<String> _networkErrors = new MutableLiveData<>();
     }
 
 }

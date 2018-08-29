@@ -10,15 +10,19 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.alikazi.codetestaim.R;
+import com.alikazi.codetestaim.models.PlayoutItem;
 import com.alikazi.codetestaim.utils.AppConstants;
 import com.alikazi.codetestaim.utils.DLog;
 import com.alikazi.codetestaim.utils.Injector;
 import com.alikazi.codetestaim.utils.LeftTopSnapHelper;
 import com.alikazi.codetestaim.viewmodel.MainViewModel;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,7 +58,6 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        DLog.i(LOG_TAG, "onViewCreated");
         mRecyclerView = view.findViewById(R.id.main_recycler_view);
         mEmptyMessageTextView = view.findViewById(R.id.main_empty_list_message);
         if (view.findViewById(R.id.detail_fragment_container_w700dp) == null) {
@@ -70,22 +73,19 @@ public class MainFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        DLog.i(LOG_TAG, "onActivityCreated");
         setHasOptionsMenu(true);
     }
 
-    private void setupAdapter() {
-        DLog.i(LOG_TAG, "setupAdapter");
-//        mAdapter =
-//        mAdapter = new PhotosAdapter(activity?.applicationContext!!, this);
-//        mMainViewModel.feed.observe(this, Observer<PagedList<Photo>> {
-//                showEmptyMessage(it?.size == 0);
-//                mAdapter.submitList(it);
-//        });
-//        mMainViewModel.networkError.observe(this, Observer<String> {
-//                Toast.makeText(getActivity(), "Wooops" + it, Toast.LENGTH_LONG).show();
-//        });
-//        mRecyclerView.setAdapter(mAdapter);
+    @Override
+    public void onResume() {
+        super.onResume();
+        DLog.i(LOG_TAG, "onResume");
+        mMainViewModel = ViewModelProviders.of(getActivity(), Injector.provideViewModelFactory(getActivity()))
+                .get(MainViewModel.class);
+        setupRecyclerView();
+        setupAdapter();
+
+        mMainViewModel.loadFeed();
     }
 
     private void setupRecyclerView() {
@@ -97,14 +97,23 @@ public class MainFragment extends Fragment {
         mRecyclerView.scheduleLayoutAnimation();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        DLog.i(LOG_TAG, "onResume");
-        mMainViewModel = ViewModelProviders.of(getActivity(), Injector.provideViewModelFactory(getActivity()))
-                .get(MainViewModel.class);
-        setupAdapter();
-        setupRecyclerView();
-        mMainViewModel.loadFeed();
+    private void setupAdapter() {
+        DLog.i(LOG_TAG, "setupAdapter");
+//        mAdapter =
+//        mAdapter = new PhotosAdapter(activity?.applicationContext!!, this);
+        mMainViewModel.mFeed.observe(this, new Observer<ArrayList<PlayoutItem>>() {
+            @Override
+            public void onChanged(ArrayList<PlayoutItem> playoutItems) {
+//                showEmptyMessage(it?.size == 0);
+//                mAdapter.submitList(it);
+            }
+        });
+        mMainViewModel.mNetworkErrors.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+//                Toast.makeText(getActivity(), "Wooops" + it, Toast.LENGTH_LONG).show();
+            }
+        });
+//        mRecyclerView.setAdapter(mAdapter);
     }
 }

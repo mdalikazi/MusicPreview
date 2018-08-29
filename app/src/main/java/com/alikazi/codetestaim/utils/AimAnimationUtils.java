@@ -14,7 +14,6 @@ public class AimAnimationUtils {
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
     public static void animateToolbar(Context context, final Toolbar toolbar, final ToolbarAnimationListener listener) {
-        DLog.i(LOG_TAG, "animateToolbar");
         if (toolbar != null) {
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
             float toolbarHeight = layoutParams.height;
@@ -62,7 +61,6 @@ public class AimAnimationUtils {
     }
 
     private static float getDefaultActionBarHeightInPixels(Context context) {
-        DLog.i(LOG_TAG, "getDefaultActionBarHeightInPixels");
         TypedValue typedValue = new TypedValue();
         boolean canGetValue = context.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
         if (canGetValue) {

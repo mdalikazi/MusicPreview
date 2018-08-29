@@ -10,12 +10,11 @@ import com.alikazi.codetestaim.utils.NetConstants;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.stanfy.gsonxml.GsonXml;
 import com.stanfy.gsonxml.GsonXmlBuilder;
 import com.stanfy.gsonxml.XmlParserCreator;
 
-import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -27,7 +26,7 @@ public class RequestsProcessor {
 
     public static void getFeedFromApi(final RequestsQueueHelper requestQueueHelper,
                                final FeedRequestListener feedRequestListener) {
-        Log.i(LOG_TAG, "getFeedFromApi");
+        DLog.i(LOG_TAG, "getFeedFromApi");
         Uri.Builder uriBuilder = new Uri.Builder()
                 .scheme(NetConstants.SCHEME_HTTP)
                 .authority(NetConstants.URL_AUTHORITY)
@@ -35,22 +34,20 @@ public class RequestsProcessor {
                 .appendPath(NetConstants.URL_PATH_NOW_PLAYING)
                 .appendPath(NetConstants.URL_PATH_NOVA)
                 .appendPath(NetConstants.URL_PATH_NOVA_100)
-                .appendPath(NetConstants.URL_PATH_ON_AIR)
-                .appendPath(NetConstants.URL_QUERY_XML);
+                .appendPath(NetConstants.URL_PATH_ON_AIR);
 
         try {
             String url = new URL(uriBuilder.build().toString()).toString();
-            JsonObjectRequest objectRequest = new JsonObjectRequest(
+            StringRequest request = new StringRequest(
                     Request.Method.GET,
                     url,
-                    null,
-                    new Response.Listener<JSONObject>() {
+                    new Response.Listener<String>() {
                         @Override
-                        public void onResponse(JSONObject response) {
-                            DLog.i(LOG_TAG, "onResponse: " + response.toString());
+                        public void onResponse(String response) {
+                            DLog.i(LOG_TAG, "onResponse: " + response);
 //                            ApiResponseModel apiResponseModel = new Gson().fromJson(response.toString(), ApiResponseModel.class);
 //                            onSuccess(photosResponse?.feed ?: emptyList())
-                            parseXml(response.toString());
+                            parseXml(response);
                             if (feedRequestListener != null) {
                                 feedRequestListener.onSuccess();
                             }
@@ -65,8 +62,9 @@ public class RequestsProcessor {
                             }
 //                            onFailure(error.message ?: "Unknown Error");
                         }
-                    });
-            requestQueueHelper.addToRequestQueue(objectRequest);
+                    }
+            );
+            requestQueueHelper.addToRequestQueue(request);
         } catch (Exception e) {
             Log.e(LOG_TAG, "Exception in makeRequest: " + e.toString());
             if (feedRequestListener != null) {
