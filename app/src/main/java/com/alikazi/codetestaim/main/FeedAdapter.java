@@ -6,6 +6,9 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,6 +75,15 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         } else {
             holder.cartImageView.setVisibility(View.GONE);
         }
+        holder.heroImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
+                rotation.setInterpolator(new AccelerateInterpolator(0.7f));
+                rotation.setFillAfter(true);
+                v.startAnimation(rotation);
+            }
+        });
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
