@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.ViewGroup;
 
 import com.alikazi.codetestaim.R;
 import com.alikazi.codetestaim.utils.AimAnimationUtils;
@@ -35,11 +36,21 @@ public class MainActivity extends AppCompatActivity implements AimAnimationUtils
         setSupportActionBar(mToolbar);
         if (savedInstanceState == null) {
             AimAnimationUtils.animateToolbar(this, mToolbar, this);
+        } else {
+            // User changed orientation, reset toolbar size to default one
+            handleOrientationChange();
         }
+    }
+
+    private void handleOrientationChange() {
+        DLog.i(LOG_TAG, "handleOrientationChange");
+        ViewGroup.LayoutParams layoutParams = mToolbar.getLayoutParams();
+        layoutParams.height = (int) AimAnimationUtils.getDefaultActionBarHeightInPixels(this);
     }
 
     @Override
     public void onToolbarAnimationEnd() {
+        DLog.i(LOG_TAG, "onToolbarAnimationEnd");
         mToolbar.setTitle(getString(R.string.toolbar_title_radio));
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, MainFragment.getInstance())

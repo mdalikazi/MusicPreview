@@ -33,6 +33,8 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
 
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
+    private static final String CURRENT_LIST_SIZE = "CURRENT_LIST_SIZE";
+
     private boolean mIsTabletMode;
     private MainViewModel mMainViewModel;
     private FeedAdapter mAdapter;
@@ -50,6 +52,30 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
         }
 
         return mInstance;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mMainViewModel = ViewModelProviders.of(this, Injector.provideViewModelFactory(getActivity())).get(MainViewModel.class);
+        mMainViewModel.mFeed.observe(this, new Observer<ArrayList<PlayoutItem>>() {
+            @Override
+            public void onChanged(ArrayList<PlayoutItem> playoutItems) {
+                DLog.d(LOG_TAG, "title: " + playoutItems.get(0).title);
+                showEmptyMessage(playoutItems.isEmpty());
+                mSwipeRefreshLayout.setRefreshing(false);
+                mAdapter.submitList(playoutItems);
+            }
+        });
+        mMainViewModel.mNetworkErrors.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String error) {
+                mEmptyMessageTextView.setText(getString(R.string.empty_list_message_error));
+                showEmptyMessage(true);
+                mSwipeRefreshLayout.setRefreshing(false);
+                Snackbar.make(mSwipeRefreshLayout, "Oops! " + error, Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Nullable
@@ -83,11 +109,22 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        DLog.w(LOG_TAG, "onActivityCreated");
         setHasOptionsMenu(true);
-        mMainViewModel = ViewModelProviders.of(getActivity(), Injector.provideViewModelFactory(getActivity())).get(MainViewModel.class);
         setupRecyclerView();
         setupAdapter();
-        loadFeed();
+        if (savedInstanceState == null) {
+            // Don't load from API only if user changes orientation
+            DLog.i(LOG_TAG, "savedInstanceState == null");
+            loadFeed();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        DLog.i(LOG_TAG, "onSaveInstanceState");
+        outState.putInt(CURRENT_LIST_SIZE, mAdapter.getItemCount());
+        super.onSaveInstanceState(outState);
     }
 
     private void loadFeed() {
@@ -110,24 +147,6 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
         DLog.i(LOG_TAG, "setupAdapter");
         mAdapter = new FeedAdapter(getActivity(), this);
         mRecyclerView.setAdapter(mAdapter);
-        mMainViewModel.mFeed.observe(this, new Observer<ArrayList<PlayoutItem>>() {
-            @Override
-            public void onChanged(ArrayList<PlayoutItem> playoutItems) {
-                DLog.d(LOG_TAG, "title: " + playoutItems.get(0).title);
-                showEmptyMessage(playoutItems.isEmpty());
-                mSwipeRefreshLayout.setRefreshing(false);
-                mAdapter.submitList(playoutItems);
-            }
-        });
-        mMainViewModel.mNetworkErrors.observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String error) {
-                mEmptyMessageTextView.setText(getString(R.string.empty_list_message_error));
-                showEmptyMessage(true);
-                mSwipeRefreshLayout.setRefreshing(false);
-                Snackbar.make(mSwipeRefreshLayout, "Oops! " + error, Snackbar.LENGTH_LONG).show();
-            }
-        });
     }
 
     @Override

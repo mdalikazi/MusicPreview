@@ -18,7 +18,7 @@ public class AimAnimationUtils {
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
             float toolbarHeight = layoutParams.height;
             ValueAnimator animator = ValueAnimator.ofFloat(toolbarHeight, getDefaultActionBarHeightInPixels(context));
-            animator.setDuration(400);
+            animator.setDuration(500);
             animator.setStartDelay(500);
             animator.setInterpolator(new DecelerateInterpolator());
             animator.setTarget(toolbar);
@@ -60,7 +60,7 @@ public class AimAnimationUtils {
         }
     }
 
-    private static float getDefaultActionBarHeightInPixels(Context context) {
+    public static float getDefaultActionBarHeightInPixels(Context context) {
         TypedValue typedValue = new TypedValue();
         boolean canGetValue = context.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
         if (canGetValue) {

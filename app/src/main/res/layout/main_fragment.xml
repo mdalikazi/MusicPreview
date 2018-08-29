@@ -29,10 +29,8 @@
                 android:id="@+id/main_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:paddingBottom="4dp"/>
-            <!--tools:listitem="@layout/item_photo"-->
+                android:paddingBottom="8dp"
+                tools:listitem="@layout/item_playout"/>
 
             <FrameLayout
                 android:id="@+id/detail_fragment_container"
