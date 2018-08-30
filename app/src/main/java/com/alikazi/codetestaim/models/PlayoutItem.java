@@ -29,6 +29,7 @@ public class PlayoutItem {
     public String title;
     @SerializedName("@type")
     public String type;
+    public boolean isPlaying;
     public ArrayList<CustomField> customFields;
 
     public class CustomField {

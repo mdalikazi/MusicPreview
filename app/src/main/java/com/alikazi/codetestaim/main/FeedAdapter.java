@@ -34,6 +34,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
     private int mNowPlayingPosition = -1;
+    private boolean mIsPlaying;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
     private MediaPlayer mMediaPlayer;
@@ -56,6 +57,11 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final ItemViewHolder holder, final int position) {
+        if (mIsPlaying && position == mNowPlayingPosition) {
+            holder.setIsRecyclable(false);
+        } else {
+            holder.setIsRecyclable(true);
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,6 +131,8 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
                 });
                 holder.heroImageView.startAnimation(rotation);
                 holder.viewFlipper.showNext();
+                item.isPlaying = true;
+                mIsPlaying = true;
             }
         };
 
@@ -142,6 +150,8 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
                 holder.viewFlipper.showNext();
                 holder.heroImageView.clearAnimation();
                 holder.equalizerView.stopBars();
+                item.isPlaying = false;
+                mIsPlaying = false;
             }
         });
     }
@@ -161,13 +171,23 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         return 0;
     }
 
-    private void resetMediaPlayer() {
+    public void resetMediaPlayer() {
         if (mMediaPlayer != null) {
             DLog.d(LOG_TAG, "Stop");
             mMediaPlayer.stop();
             mMediaPlayer.reset();
             mMediaPlayer.release();
             mMediaPlayer = new MediaPlayer();
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull ItemViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        if (mIsPlaying) {
+            holder.setIsRecyclable(false);
+        } else {
+            holder.setIsRecyclable(true);
         }
     }
 

@@ -93,7 +93,6 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        DLog.w(LOG_TAG, "onActivityCreated");
         setHasOptionsMenu(true);
         setupRecyclerView();
         setupAdapter();
@@ -112,9 +111,9 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        DLog.i(LOG_TAG, "onDestroy");
+    public void onStop() {
+        super.onStop();
+        mAdapter.resetMediaPlayer();
         mRequestsQueueHelper.cancelAllRequests();
     }
 
