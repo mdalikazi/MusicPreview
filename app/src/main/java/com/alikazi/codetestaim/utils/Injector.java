@@ -8,18 +8,11 @@ import com.alikazi.codetestaim.viewmodel.ViewModelFactory;
 
 public class Injector {
 
-    public static ViewModelFactory provideViewModelFactory(Context context) {
-        RequestsQueueHelper requestQueueHelper = RequestsQueueHelper.getInstance(context);
+    public static ViewModelFactory provideViewModelFactory(Context context, RequestsQueueHelper requestQueueHelper) {
         return new ViewModelFactory(requestQueueHelper, provideAppRepository(context));
     }
 
     public static AppRepository provideAppRepository(Context context) {
-//        return AppRepository(provideCache(context));
         return new AppRepository();
     }
-
-//    fun provideCache(context: Context): LocalCache {
-//        val database: AppDatabase = AppDatabase.getDatabaseInstance(context)
-//        return LocalCache(database.photoDao(), Executors.newSingleThreadExecutor())
-//    }
 }

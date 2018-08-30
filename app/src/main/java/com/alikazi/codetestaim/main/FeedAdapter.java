@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.alikazi.codetestaim.R;
 import com.alikazi.codetestaim.models.PlayoutItem;
@@ -32,6 +33,8 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
 
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
+    private int mNowPlayingPosition = -1;
+    private boolean mIsPlaying;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
     private MediaPlayer mMediaPlayer;
@@ -54,16 +57,15 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final ItemViewHolder holder, final int position) {
+        final PlayoutItem item = getItem(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mItemSelectionListener != null) {
-                    mItemSelectionListener.onItemSelected(position);
+                    mItemSelectionListener.onItemSelected(item);
                 }
             }
         });
-
-        final PlayoutItem item = getItem(position);
         AimViewUtils.showImageWithGlide(mContext, item.imageUrl, holder.heroImageView);
         holder.titleTextView.setText(item.title);
         holder.artistTextView.setText(item.artist);
@@ -84,39 +86,68 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         } else {
             holder.cartImageView.setVisibility(View.GONE);
         }
-        if (item.previewUrl != null && !item.previewUrl.isEmpty()) {
-            holder.heroImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mMediaPlayer.isPlaying()) {
-                        return;
-                    }
-                    Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
-                    rotation.setInterpolator(new AccelerateDecelerateInterpolator());
-                    rotation.setFillAfter(true);
-                    rotation.setDuration(streamPreview(item.previewUrl));
-                    rotation.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            holder.equalizerView.animate().alpha(0.4f).setDuration(1000);
-                            holder.equalizerView.animateBars();
-                        }
 
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            holder.equalizerView.animate().alpha(0f).setDuration(1000);
-                            holder.equalizerView.stopBars();
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-                    view.startAnimation(rotation);
+        View.OnClickListener playPreviewClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (position == mNowPlayingPosition &&
+                        mMediaPlayer != null &&
+                        mMediaPlayer.isPlaying()) {
+                    DLog.i(LOG_TAG, "NowPlaying return");
+                    // Ignore multiple taps by user for the same preview if it is already playing
+                    return;
+                } else {
+                    // Stop currently playing preview and prepare new one
+                    resetMediaPlayer();
                 }
-            });
+                mNowPlayingPosition = position;
+                Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
+                rotation.setInterpolator(new AccelerateDecelerateInterpolator());
+                rotation.setFillAfter(true);
+                rotation.setDuration(streamPreview(item.previewUrl));
+                rotation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        holder.equalizerView.animate().alpha(0.4f).setDuration(1000);
+                        holder.equalizerView.animateBars();
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        holder.equalizerView.animate().alpha(0f).setDuration(1000);
+                        holder.equalizerView.stopBars();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                holder.heroImageView.startAnimation(rotation);
+                holder.viewFlipper.showNext();
+                item.isPlaying = true;
+                mIsPlaying = true;
+            }
+        };
+
+        if (item.previewUrl != null && !item.previewUrl.isEmpty()) {
+            holder.heroImageView.setOnClickListener(playPreviewClickListener);
+            holder.playButton.setOnClickListener(playPreviewClickListener);
+        } else {
+            holder.viewFlipper.setVisibility(View.GONE);
         }
+
+        holder.pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetMediaPlayer();
+                holder.viewFlipper.showNext();
+                holder.heroImageView.clearAnimation();
+                holder.equalizerView.stopBars();
+                item.isPlaying = false;
+                mIsPlaying = false;
+            }
+        });
     }
 
     private int streamPreview(String url) {
@@ -128,10 +159,30 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             return mMediaPlayer.getDuration();
         } catch (Exception e) {
             DLog.d(LOG_TAG, "Exception streaming preview: " + e.toString());
-            Toast.makeText(mContext, "", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, R.string.toast_message_streaming_error, Toast.LENGTH_LONG).show();
         }
 
         return 0;
+    }
+
+    public void resetMediaPlayer() {
+        if (mMediaPlayer != null) {
+            DLog.d(LOG_TAG, "Stop");
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = new MediaPlayer();
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull ItemViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        if (mIsPlaying) {
+            holder.setIsRecyclable(false);
+        } else {
+            holder.setIsRecyclable(true);
+        }
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -141,6 +192,9 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         private TextView artistTextView;
         private TextView albumTextView;
         private ImageView cartImageView;
+        private ViewFlipper viewFlipper;
+        private ImageView playButton;
+        private ImageView pauseButton;
         private EqualizerView equalizerView;
 
         private ItemViewHolder(View view) {
@@ -150,6 +204,9 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             artistTextView = view.findViewById(R.id.item_artist);
             albumTextView = view.findViewById(R.id.item_album);
             cartImageView = view.findViewById(R.id.item_cart);
+            playButton = view.findViewById(R.id.item_play);
+            pauseButton = view.findViewById(R.id.item_stop);
+            viewFlipper = view.findViewById(R.id.item_play_pause_view_flipper);
             equalizerView = view.findViewById(R.id.equalizer);
         }
     }
@@ -168,6 +225,6 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             };
 
     public interface ItemSelectionListener {
-        void onItemSelected(int itemPosition);
+        void onItemSelected(PlayoutItem item);
     }
 }

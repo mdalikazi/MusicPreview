@@ -4,16 +4,10 @@
     <color name="colorPrimary">#00AA8D</color>
     <color name="colorPrimaryDark">#008975</color>
     <color name="colorAccent">#3D5AFE</color>
-    <!--<color name="colorAccent">#FF4081</color>-->
     <color name="colorTextPrimary">@android:color/primary_text_light</color>
     <color name="colorTextSecondary">@android:color/tertiary_text_light</color>
-    <color name="colorIconTint">#56000000</color>
     <color name="colorDivider">#EEEEEE</color>
-    <color name="colorTransparent">#00000000</color>
     <color name="colorWindowBackground">#E2E2E2</color>
-    <color name="colorPremium">#FFC400</color>
-    <color name="colorWhite">#FFFFFF</color>
-
     <color name="colorIconInactive">#757575</color>
     <color name="colorFavorite">#E53935</color>
 

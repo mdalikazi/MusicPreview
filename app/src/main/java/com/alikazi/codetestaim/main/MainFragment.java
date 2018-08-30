@@ -6,11 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.alikazi.codetestaim.R;
 import com.alikazi.codetestaim.models.PlayoutItem;
+import com.alikazi.codetestaim.network.RequestsQueueHelper;
 import com.alikazi.codetestaim.utils.AppConstants;
 import com.alikazi.codetestaim.utils.DLog;
 import com.alikazi.codetestaim.utils.Injector;
@@ -35,29 +35,22 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
 
     private static final String CURRENT_LIST_SIZE = "CURRENT_LIST_SIZE";
 
-    private boolean mIsTabletMode;
     private MainViewModel mMainViewModel;
     private FeedAdapter mAdapter;
+    private RequestsQueueHelper mRequestsQueueHelper;
 
     private RecyclerView mRecyclerView;
     private TextView mEmptyMessageTextView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private FrameLayout mDetailFragmentContainer;
-
-    private static MainFragment mInstance;
-
-    public static MainFragment getInstance() {
-        if (mInstance == null) {
-            mInstance = new MainFragment();
-        }
-
-        return mInstance;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMainViewModel = ViewModelProviders.of(this, Injector.provideViewModelFactory(getActivity())).get(MainViewModel.class);
+        DLog.i(LOG_TAG, "onCreate");
+        mRequestsQueueHelper = RequestsQueueHelper.getInstance(getActivity());
+        mMainViewModel = ViewModelProviders.of(this,
+                Injector.provideViewModelFactory(getActivity(), mRequestsQueueHelper))
+                .get(MainViewModel.class);
         mMainViewModel.mFeed.observe(this, new Observer<ArrayList<PlayoutItem>>() {
             @Override
             public void onChanged(ArrayList<PlayoutItem> playoutItems) {
@@ -95,21 +88,11 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
                 loadFeed();
             }
         });
-
-        if (view.findViewById(R.id.detail_fragment_container_w700dp) == null) {
-            mIsTabletMode = false;
-            mDetailFragmentContainer = view.findViewById(R.id.detail_fragment_container);
-        } else {
-            mIsTabletMode = true;
-            mDetailFragmentContainer = view.findViewById(R.id.detail_fragment_container_w700dp);
-        }
-        DLog.d(LOG_TAG, "mIsTabletMode: " + mIsTabletMode);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        DLog.w(LOG_TAG, "onActivityCreated");
         setHasOptionsMenu(true);
         setupRecyclerView();
         setupAdapter();
@@ -127,10 +110,19 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdapter.resetMediaPlayer();
+        mRequestsQueueHelper.cancelAllRequests();
+    }
+
     private void loadFeed() {
         mEmptyMessageTextView.setText(getString(R.string.empty_list_message_loading));
         showEmptyMessage(true);
         mSwipeRefreshLayout.setRefreshing(true);
+        mRecyclerView.invalidate();
+        mRecyclerView.scheduleLayoutAnimation();
         mMainViewModel.loadFeed();
     }
 
@@ -140,7 +132,6 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
         new LeftTopSnapHelper().attachToRecyclerView(mRecyclerView);
         LayoutAnimationController layoutAnimation = AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.vertical_layout_animation);
         mRecyclerView.setLayoutAnimation(layoutAnimation);
-        mRecyclerView.scheduleLayoutAnimation();
     }
 
     private void setupAdapter() {
@@ -150,8 +141,8 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
     }
 
     @Override
-    public void onItemSelected(int itemPosition) {
-        DLog.d(LOG_TAG, "User selected position " + itemPosition);
+    public void onItemSelected(PlayoutItem item) {
+        Snackbar.make(mSwipeRefreshLayout, getString(R.string.snackbar_message_user_tapped, item.title), Snackbar.LENGTH_SHORT).show();
     }
 
     /**
