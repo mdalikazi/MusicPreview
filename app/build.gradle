@@ -28,10 +28,6 @@ dependencies {
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:" + rootProject.archComponentsVersion
 
-    // Room
-    implementation "android.arch.persistence.room:runtime:" + rootProject.archComponentsVersion
-    annotationProcessor "android.arch.persistence.room:compiler:" + rootProject.archComponentsVersion
-
     implementation('com.stanfy:gson-xml-java:0.1.+') {
         exclude group: 'xmlpull', module: 'xmlpull'
     }
