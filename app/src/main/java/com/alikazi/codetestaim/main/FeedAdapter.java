@@ -116,6 +116,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
                     public void onAnimationEnd(Animation animation) {
                         holder.equalizerView.animate().alpha(0f).setDuration(1000);
                         holder.equalizerView.stopBars();
+                        holder.viewFlipper.showNext();
                     }
 
                     @Override
