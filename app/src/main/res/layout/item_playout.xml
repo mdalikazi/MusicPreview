@@ -103,13 +103,13 @@
                 android:outAnimation="@android:anim/fade_out">
 
                 <ImageView
-                    android:id="@+id/item_play_1"
+                    android:id="@+id/item_play"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_play"/>
 
                 <ImageView
-                    android:id="@+id/item_pause_2"
+                    android:id="@+id/item_pause"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_pause"/>

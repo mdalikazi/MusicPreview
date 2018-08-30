@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.alikazi.codetestaim.R;
 import com.alikazi.codetestaim.models.PlayoutItem;
@@ -32,10 +33,10 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
 
     private static final String LOG_TAG = AppConstants.AIM_LOG_TAG;
 
+    private int mNowPlayingPosition = -1;
     private Context mContext;
-    private int mNowPlayingPosition;
     private LayoutInflater mLayoutInflater;
-//    private MediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer;
     private ItemSelectionListener mItemSelectionListener;
 
     public FeedAdapter(Context context, ItemSelectionListener itemSelectionListener) {
@@ -43,6 +44,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         mContext = context;
         mItemSelectionListener = itemSelectionListener;
         mLayoutInflater = LayoutInflater.from(mContext);
+        mMediaPlayer = new MediaPlayer();
     }
 
     @NonNull
@@ -84,46 +86,83 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         } else {
             holder.cartImageView.setVisibility(View.GONE);
         }
-        if (item.previewUrl != null && !item.previewUrl.isEmpty()) {
-            holder.heroImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (position == mNowPlayingPosition) {
-                        DLog.i(LOG_TAG, "NowPlaying return");
-                        return;
+
+        View.OnClickListener playPreviewClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (position == mNowPlayingPosition) {
+                    DLog.i(LOG_TAG, "NowPlaying return");
+                    // Ignore multiple taps by user
+                    return;
+                } else {
+                    // Stop currently playing preview and prepare new one
+                    if (mMediaPlayer != null) {
+                        mMediaPlayer.stop();
+                        mMediaPlayer.reset();
+                        mMediaPlayer.release();
+                        mMediaPlayer = new MediaPlayer();
                     }
-                    mNowPlayingPosition = position;
-                    Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
-                    rotation.setInterpolator(new AccelerateDecelerateInterpolator());
-                    rotation.setFillAfter(true);
-                    rotation.setDuration(streamPreview(item.previewUrl));
-                    rotation.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            holder.equalizerView.animate().alpha(0.4f).setDuration(1000);
-                            holder.equalizerView.animateBars();
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            holder.equalizerView.animate().alpha(0f).setDuration(1000);
-                            holder.equalizerView.stopBars();
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-                    view.startAnimation(rotation);
+                    holder.viewFlipper.showNext();
+                    if (holder.heroImageView.getAnimation() != null) {
+                        holder.heroImageView.getAnimation().cancel();
+                    }
+                    holder.equalizerView.stopBars();
+                    notifyItemChanged(mNowPlayingPosition);
                 }
-            });
+                mNowPlayingPosition = position;
+                Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
+                rotation.setInterpolator(new AccelerateDecelerateInterpolator());
+                rotation.setFillAfter(true);
+                rotation.setDuration(streamPreview(item.previewUrl));
+                rotation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        holder.equalizerView.animate().alpha(0.4f).setDuration(1000);
+                        holder.equalizerView.animateBars();
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        holder.equalizerView.animate().alpha(0f).setDuration(1000);
+                        holder.equalizerView.stopBars();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                holder.heroImageView.startAnimation(rotation);
+                holder.viewFlipper.showNext();
+            }
+        };
+
+        if (item.previewUrl != null && !item.previewUrl.isEmpty()) {
+            holder.heroImageView.setOnClickListener(playPreviewClickListener);
+            holder.playButton.setOnClickListener(playPreviewClickListener);
+        } else {
+            holder.viewFlipper.setVisibility(View.GONE);
         }
+
+        holder.pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMediaPlayer != null) {
+                    DLog.d(LOG_TAG, "Stop");
+                    mMediaPlayer.stop();
+                    mMediaPlayer.reset();
+                    mMediaPlayer.release();
+                    mMediaPlayer = new MediaPlayer();
+                }
+                holder.viewFlipper.showNext();
+                holder.heroImageView.getAnimation().cancel();
+                holder.equalizerView.stopBars();
+            }
+        });
     }
 
     private int streamPreview(String url) {
         try {
-            MediaPlayer mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setDataSource(url);
             mMediaPlayer.prepare(); // might take long! (for buffering, etc)
@@ -144,6 +183,9 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         private TextView artistTextView;
         private TextView albumTextView;
         private ImageView cartImageView;
+        private ViewFlipper viewFlipper;
+        private ImageView playButton;
+        private ImageView pauseButton;
         private EqualizerView equalizerView;
 
         private ItemViewHolder(View view) {
@@ -153,6 +195,9 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             artistTextView = view.findViewById(R.id.item_artist);
             albumTextView = view.findViewById(R.id.item_album);
             cartImageView = view.findViewById(R.id.item_cart);
+            playButton = view.findViewById(R.id.item_play);
+            pauseButton = view.findViewById(R.id.item_pause);
+            viewFlipper = view.findViewById(R.id.item_play_pause_view_flipper);
             equalizerView = view.findViewById(R.id.equalizer);
         }
     }
