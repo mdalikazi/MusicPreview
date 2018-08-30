@@ -1,3 +1,16 @@
 <resources>
+
     <string name="app_name">CodeTest - AIM</string>
+    <string name="image_content_description_default">Image</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="toolbar_title_top_charts">Top Charts</string>
+    <string name="permission_explanation_storage">AimTest requires storage permission to manage local data.</string>
+    <string name="network_error_no_internet">Please check your internet connection!</string>
+    <string name="empty_list_message_loading">Loading feed&#8230;</string>
+    <string name="empty_list_message_error">There was an error loading the feed.</string>
+    <string name="toast_message_itunes">Loading iTunes&#8230;</string>
+    <string name="toast_message_streaming_error">An error occurred while streaming.</string>
+    <string name="snackbar_message_user_tapped">You tapped on %1$s</string>
+
 </resources>
