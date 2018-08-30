@@ -43,15 +43,6 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
     private TextView mEmptyMessageTextView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private static MainFragment mInstance;
-    public static MainFragment getInstance() {
-        if (mInstance == null) {
-            mInstance = new MainFragment();
-        }
-
-        return mInstance;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

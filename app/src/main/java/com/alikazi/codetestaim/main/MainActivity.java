@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements AimAnimationUtils
         DLog.i(LOG_TAG, "onToolbarAnimationEnd");
         mToolbar.setTitle(getString(R.string.toolbar_title_radio));
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, MainFragment.getInstance())
+                .replace(R.id.container, new MainFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commitNow();
     }

@@ -1,12 +1,11 @@
 package com.alikazi.codetestaim.network;
 
+import com.alikazi.codetestaim.models.ApiResponseModel;
 import com.alikazi.codetestaim.models.PlayoutItem;
 import com.alikazi.codetestaim.utils.AppConstants;
 import com.alikazi.codetestaim.utils.DLog;
 
 import java.util.ArrayList;
-
-import androidx.lifecycle.MutableLiveData;
 
 public class AppRepository {
 
@@ -29,10 +28,4 @@ public class AppRepository {
         });
         return apiResponseModel;
     }
-
-    public class ApiResponseModel {
-        public MutableLiveData<ArrayList<PlayoutItem>> _feed = new MutableLiveData<>();
-        public MutableLiveData<String> _networkErrors = new MutableLiveData<>();
-    }
-
 }

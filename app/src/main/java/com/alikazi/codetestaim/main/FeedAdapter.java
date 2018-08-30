@@ -87,6 +87,16 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             holder.cartImageView.setVisibility(View.GONE);
         }
 
+        /*if (item.isPlaying) {
+            holder.viewFlipper.showNext();
+            if (holder.heroImageView.getAnimation() != null) {
+                holder.heroImageView.getAnimation().cancel();
+            }
+            holder.equalizerView.stopBars();
+        }
+
+        holder.equalizerView.stopBars();*/
+
         View.OnClickListener playPreviewClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,14 +112,11 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
                         mMediaPlayer.release();
                         mMediaPlayer = new MediaPlayer();
                     }
-                    holder.viewFlipper.showNext();
-                    if (holder.heroImageView.getAnimation() != null) {
-                        holder.heroImageView.getAnimation().cancel();
-                    }
-                    holder.equalizerView.stopBars();
-                    notifyItemChanged(mNowPlayingPosition);
+//                    getItem(mNowPlayingPosition).isPlaying = false;
+//                    notifyItemChanged(mNowPlayingPosition);
                 }
                 mNowPlayingPosition = position;
+                item.isPlaying = true;
                 Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
                 rotation.setInterpolator(new AccelerateDecelerateInterpolator());
                 rotation.setFillAfter(true);
@@ -154,6 +161,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
                     mMediaPlayer.release();
                     mMediaPlayer = new MediaPlayer();
                 }
+                item.isPlaying = false;
                 holder.viewFlipper.showNext();
                 holder.heroImageView.getAnimation().cancel();
                 holder.equalizerView.stopBars();

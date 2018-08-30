@@ -1,5 +1,7 @@
 package com.alikazi.codetestaim.viewmodel;
 
+import com.alikazi.codetestaim.models.ApiRequestModel;
+import com.alikazi.codetestaim.models.ApiResponseModel;
 import com.alikazi.codetestaim.models.PlayoutItem;
 import com.alikazi.codetestaim.network.AppRepository;
 import com.alikazi.codetestaim.network.RequestsQueueHelper;
@@ -27,33 +29,33 @@ public class MainViewModel extends ViewModel {
         mRequestQueueHelper = requestsQueueHelper;
     }
 
-    private MutableLiveData<AppRepository.ApiResponseModel> mResponseLiveData = new MutableLiveData<>();
-    private LiveData<AppRepository.ApiResponseModel> mFeedResult = Transformations.map(mResponseLiveData,
-            new Function<AppRepository.ApiResponseModel, AppRepository.ApiResponseModel>() {
+    private MutableLiveData<ApiRequestModel> mResponseLiveData = new MutableLiveData<>();
+    private LiveData<ApiResponseModel> mFeedResult = Transformations.map(mResponseLiveData,
+            new Function<ApiRequestModel, ApiResponseModel>() {
                 @Override
-                public AppRepository.ApiResponseModel apply(AppRepository.ApiResponseModel input) {
+                public ApiResponseModel apply(ApiRequestModel input) {
                     return mAppRepository.loadFeed(mRequestQueueHelper);
                 }
             });
 
     public LiveData<ArrayList<PlayoutItem>> mFeed = Transformations.switchMap(mFeedResult,
-            new Function<AppRepository.ApiResponseModel, LiveData<ArrayList<PlayoutItem>>>() {
+            new Function<ApiResponseModel, LiveData<ArrayList<PlayoutItem>>>() {
                 @Override
-                public LiveData<ArrayList<PlayoutItem>> apply(AppRepository.ApiResponseModel input) {
+                public LiveData<ArrayList<PlayoutItem>> apply(ApiResponseModel input) {
                     return input._feed;
                 }
             });
 
     public LiveData<String> mNetworkErrors = Transformations.switchMap(mFeedResult,
-            new Function<AppRepository.ApiResponseModel, LiveData<String>>() {
+            new Function<ApiResponseModel, LiveData<String>>() {
                 @Override
-                public LiveData<String> apply(AppRepository.ApiResponseModel input) {
+                public LiveData<String> apply(ApiResponseModel input) {
                     return input._networkErrors;
                 }
             });
 
     public void loadFeed() {
         DLog.i(LOG_TAG, "loadFeed");
-        mResponseLiveData.setValue(null);
+        mResponseLiveData.postValue(new ApiRequestModel());
     }
 }
