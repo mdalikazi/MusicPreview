@@ -20,7 +20,7 @@
             android:layout_height="35dp"
             android:layout_alignParentBottom="true"
             android:alpha="0"
-            app:barColor="@color/colorAccent"
+            app:barColor="@color/colorEqualizer"
             app:barCount="80"
             app:barWidth="4dp"
             app:marginLeft="1dp"
@@ -109,10 +109,10 @@
                     android:src="@drawable/ic_play"/>
 
                 <ImageView
-                    android:id="@+id/item_pause"
+                    android:id="@+id/item_stop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_pause"/>
+                    android:src="@drawable/ic_stop"/>
 
             </ViewFlipper>
 

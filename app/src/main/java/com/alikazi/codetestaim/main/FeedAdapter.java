@@ -87,36 +87,20 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             holder.cartImageView.setVisibility(View.GONE);
         }
 
-        /*if (item.isPlaying) {
-            holder.viewFlipper.showNext();
-            if (holder.heroImageView.getAnimation() != null) {
-                holder.heroImageView.getAnimation().cancel();
-            }
-            holder.equalizerView.stopBars();
-        }
-
-        holder.equalizerView.stopBars();*/
-
         View.OnClickListener playPreviewClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (position == mNowPlayingPosition) {
+                if (position == mNowPlayingPosition &&
+                        mMediaPlayer != null &&
+                        mMediaPlayer.isPlaying()) {
                     DLog.i(LOG_TAG, "NowPlaying return");
-                    // Ignore multiple taps by user
+                    // Ignore multiple taps by user for the same preview if it is already playing
                     return;
                 } else {
                     // Stop currently playing preview and prepare new one
-                    if (mMediaPlayer != null) {
-                        mMediaPlayer.stop();
-                        mMediaPlayer.reset();
-                        mMediaPlayer.release();
-                        mMediaPlayer = new MediaPlayer();
-                    }
-//                    getItem(mNowPlayingPosition).isPlaying = false;
-//                    notifyItemChanged(mNowPlayingPosition);
+                    resetMediaPlayer();
                 }
                 mNowPlayingPosition = position;
-                item.isPlaying = true;
                 Animation rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotation);
                 rotation.setInterpolator(new AccelerateDecelerateInterpolator());
                 rotation.setFillAfter(true);
@@ -154,16 +138,9 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         holder.pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMediaPlayer != null) {
-                    DLog.d(LOG_TAG, "Stop");
-                    mMediaPlayer.stop();
-                    mMediaPlayer.reset();
-                    mMediaPlayer.release();
-                    mMediaPlayer = new MediaPlayer();
-                }
-                item.isPlaying = false;
+                resetMediaPlayer();
                 holder.viewFlipper.showNext();
-                holder.heroImageView.getAnimation().cancel();
+                holder.heroImageView.clearAnimation();
                 holder.equalizerView.stopBars();
             }
         });
@@ -182,6 +159,16 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
         }
 
         return 0;
+    }
+
+    private void resetMediaPlayer() {
+        if (mMediaPlayer != null) {
+            DLog.d(LOG_TAG, "Stop");
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = new MediaPlayer();
+        }
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -204,7 +191,7 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             albumTextView = view.findViewById(R.id.item_album);
             cartImageView = view.findViewById(R.id.item_cart);
             playButton = view.findViewById(R.id.item_play);
-            pauseButton = view.findViewById(R.id.item_pause);
+            pauseButton = view.findViewById(R.id.item_stop);
             viewFlipper = view.findViewById(R.id.item_play_pause_view_flipper);
             equalizerView = view.findViewById(R.id.equalizer);
         }
