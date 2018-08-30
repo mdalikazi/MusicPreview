@@ -141,8 +141,8 @@ public class MainFragment extends Fragment implements FeedAdapter.ItemSelectionL
     }
 
     @Override
-    public void onItemSelected(int itemPosition) {
-        DLog.d(LOG_TAG, "User selected position " + itemPosition);
+    public void onItemSelected(PlayoutItem item) {
+        Snackbar.make(mSwipeRefreshLayout, getString(R.string.snackbar_message_user_tapped, item.title), Snackbar.LENGTH_SHORT).show();
     }
 
     /**

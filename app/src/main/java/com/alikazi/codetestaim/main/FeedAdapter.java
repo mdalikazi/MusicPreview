@@ -57,21 +57,15 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final ItemViewHolder holder, final int position) {
-        if (mIsPlaying && position == mNowPlayingPosition) {
-            holder.setIsRecyclable(false);
-        } else {
-            holder.setIsRecyclable(true);
-        }
+        final PlayoutItem item = getItem(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mItemSelectionListener != null) {
-                    mItemSelectionListener.onItemSelected(position);
+                    mItemSelectionListener.onItemSelected(item);
                 }
             }
         });
-
-        final PlayoutItem item = getItem(position);
         AimViewUtils.showImageWithGlide(mContext, item.imageUrl, holder.heroImageView);
         holder.titleTextView.setText(item.title);
         holder.artistTextView.setText(item.artist);
@@ -231,6 +225,6 @@ public class FeedAdapter extends ListAdapter<PlayoutItem, FeedAdapter.ItemViewHo
             };
 
     public interface ItemSelectionListener {
-        void onItemSelected(int itemPosition);
+        void onItemSelected(PlayoutItem item);
     }
 }

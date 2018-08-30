@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements AimAnimationUtils
     @Override
     public void onToolbarAnimationEnd() {
         DLog.i(LOG_TAG, "onToolbarAnimationEnd");
-        mToolbar.setTitle(getString(R.string.toolbar_title_radio));
+        mToolbar.setTitle(getString(R.string.toolbar_title_top_charts));
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, new MainFragment())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
