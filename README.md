@@ -3,11 +3,11 @@
 ### Summary ###
 
 * __What was my apporach?__
-    - Architecture
+    - Architecture  
     I chose to go with the latest MVVM architecture for this project. There are a lot of advantages of using this architecture like `ViewModel` survives orientation changes out of the box, the architecture follows SOLID principles and splits reponsibilites to many smaller, maintainable components. I prefer this architecture to MVP. Also, this is the future of Android.
-    - UI
-    I added some animations to make the UI more appealing. The API was quite simple so for the given data, I think I used a lot of it.
-    - Android Jetpack
+    - UI  
+    I added a custom `SnapHelper` that will snap a full item view to the top when the user scrolls. This helps keep a neat look and experience. I also added some animations to make the UI more appealing. The API was quite simple so for the given data, I think I used a lot of it.
+    - Android Jetpack  
     I wanted to add Room as a database, but later decided that it would be overkill for this project. The API is always getting updated, so it makes sense to fetch API frequently. In real project, I would use `WorkManager` to schedule API calls in the background to fetch new data and update my database.
 
 * __What libraries did I use and why?__
