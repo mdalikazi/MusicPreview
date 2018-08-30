@@ -20,7 +20,7 @@
             android:layout_height="35dp"
             android:layout_alignParentBottom="true"
             android:alpha="0"
-            app:barColor="@color/colorEqualizer"
+            app:barColor="@color/colorAccent"
             app:barCount="80"
             app:barWidth="4dp"
             app:marginLeft="1dp"
