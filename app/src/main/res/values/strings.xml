@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">CodeTest - AIM</string>
+    <string name="app_name">Music Preview</string>
     <string name="image_content_description_default">Image</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
