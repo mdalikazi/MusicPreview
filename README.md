@@ -1,5 +1,3 @@
-# README #
-
 <img src="https://i.imgur.com/UMPqWDV.gif" title="By Ali Kazi"/>
 
 ### Summary ###
