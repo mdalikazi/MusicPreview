@@ -35,8 +35,7 @@
     - Add `Room` and `WorkManager` to get scheduled updates.
     - Improve the UI more.
 
-### Who do I talk to? ###
+### Repo owner ###
 
-* Repo owner or admin  
 Ali Kazi   
 [LinkedIn](linkedin.com/in/mdalikazi)  
